@@ -10,8 +10,25 @@
     
     <title>Dashboard OB - BBC Ruangan & Proyektor</title>
     
+    <!-- Icon Aplikasi Lokal -->
     <link rel="icon" type="image/png" href="icon-ob.png">
     <link rel="apple-touch-icon" href="icon-ob.png">
+
+    <!-- Meta Tag Tambahan untuk Tampilan App Mobile Fullscreen -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#e31b23">
+
+    <!-- PWA Manifest & Pendaftaran Service Worker -->
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
 
     <!-- (3) Style CSS Dasar untuk Mobile & Responsif Desktop -->
     <style>
