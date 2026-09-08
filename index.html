@@ -5,22 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
-    <!-- (2) Meta Viewport di Bagian <head> -->
+    <!-- (2) Meta Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>Dashboard OB - BBC Ruangan & Proyektor</title>
+    <title>Dashboard OB - BBC Ruangan, Denah & AC</title>
     
     <!-- Icon Aplikasi Lokal -->
     <link rel="icon" type="image/png" href="icon-ob.png">
     <link rel="apple-touch-icon" href="icon-ob.png">
 
-    <!-- Meta Tag Tambahan untuk Tampilan App Mobile Fullscreen -->
+    <!-- Meta Tag Mobile Fullscreen -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e31b23">
 
-    <!-- PWA Manifest & Pendaftaran Service Worker -->
+    <!-- PWA Manifest & Service Worker -->
     <link rel="manifest" href="manifest.json">
     <script>
       if ('serviceWorker' in navigator) {
@@ -30,7 +30,7 @@
       }
     </script>
 
-    <!-- (3) Style CSS Dasar untuk Mobile & Responsif Desktop -->
+    <!-- Style CSS Utama -->
     <style>
         :root {
             --bbc-red: #e31b23;
@@ -50,10 +50,11 @@
             min-height: 100vh;
         }
 
+        /* Header Fixed */
         .header {
             background-color: var(--bbc-red);
             color: white;
-            padding: 15px 20px;
+            padding: 12px 15px 8px 15px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             position: sticky;
@@ -62,20 +63,52 @@
         }
 
         .header img {
-            height: 48px;
+            height: 42px;
             background: white;
             padding: 3px 6px;
             border-radius: 6px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             object-fit: contain;
+        }
+
+        /* Tab Bar Navigation */
+        .tab-bar {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 75px;
+            z-index: 39;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--bbc-red);
+            border-bottom-color: var(--bbc-red);
+            background-color: #fff5f5;
         }
 
         .container {
             max-width: 800px;
             margin: 15px auto;
-            padding: 0 15px 30px 15px;
+            padding: 0 12px 30px 12px;
         }
 
+        /* Filter Tanggal */
         .filter-card {
             background: white;
             padding: 12px 15px;
@@ -128,6 +161,7 @@
             line-height: 1.4;
         }
 
+        /* Card Jadwal Ruangan */
         .room-card {
             background: white;
             border-radius: 10px;
@@ -185,7 +219,222 @@
             padding-top: 6px;
         }
 
-        /* (4) Indikator Loading Overlay CSS (Pure CSS Spinner) */
+        /* DENAH STYLING (2D GRID INTERAKTIF) */
+        .map-section {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .map-section-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--bbc-red);
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .floor-grid {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .grid-3col { grid-template-columns: repeat(3, 1fr); }
+        .grid-2col { grid-template-columns: repeat(2, 1fr); }
+        .grid-1col { grid-template-columns: 1fr; }
+
+        .room-box {
+            background: #f8f9fa;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            padding: 10px 6px;
+            text-align: center;
+            min-height: 65px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            position: relative;
+        }
+
+        .room-box:active {
+            transform: scale(0.96);
+        }
+
+        .room-box .code {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #212529;
+        }
+
+        .room-box .sub {
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .room-box .icon-badge {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 0.75rem;
+        }
+
+        /* Warna Status Ruangan di Denah */
+        .room-box.st-proyektor {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .room-box.st-active {
+            background-color: #cce5ff;
+            border-color: #0d6efd;
+            color: #004085;
+        }
+
+        .room-box.st-office {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        /* Legend Denah */
+        .map-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        /* TABEL LIST AC */
+        .ac-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--bbc-red);
+        }
+
+        .ac-info-room {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #1e293b;
+        }
+
+        .ac-info-detail {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .ac-badge-count {
+            background: #e2e8f0;
+            color: #334155;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* MODAL POPUP JADWAL & AC RUANGAN */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.2s ease-out;
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin: 0;
+            color: var(--bbc-red);
+        }
+
+        .modal-close {
+            background: #f1f5f9;
+            border: none;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #475569;
+        }
+
+        /* Indikator Loading Overlay Spinner */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -216,7 +465,6 @@
             text-align: center;
         }
 
-        /* Pure CSS Spinner Animasi Putar */
         .spinner-custom {
             width: 40px;
             height: 40px;
@@ -232,28 +480,15 @@
             100% { transform: rotate(360deg); }
         }
 
-        .loading-title {
-            font-weight: bold;
-            font-size: 1rem;
-            color: #1e293b;
-            margin: 0;
-        }
+        .loading-title { font-weight: bold; font-size: 1rem; color: #1e293b; margin: 0; }
+        .loading-subtitle { font-size: 0.75rem; color: #64748b; margin-top: 4px; margin-bottom: 0; }
 
-        .loading-subtitle {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 4px;
-            margin-bottom: 0;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- (4) Indikator Loading Overlay dengan Pure CSS Spinner -->
+    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-card">
             <div class="spinner-custom"></div>
@@ -265,12 +500,20 @@
     <!-- Header Navbar -->
     <div class="header">
         <img src="https://drive.google.com/thumbnail?id=1xp4tsE6RhaxXFSC7XQN45_3TOdUsUe5j&sz=s500" alt="Logo BBC">
-        <h2 style="margin:0; font-size: 1.25rem;">📋 JADWAL KESIAPAN RUANG (OB)</h2>
-        <p style="margin:3px 0 0 0; font-size:0.85rem; opacity: 0.9;">BBC Ruangan & Proyektor</p>
+        <h2 style="margin:0; font-size: 1.15rem;">📋 DASHBOARD OPERASIONAL OB</h2>
+        <p style="margin:2px 0 0 0; font-size:0.8rem; opacity: 0.9;">BBC Karawang - Ruangan & AC</p>
+    </div>
+
+    <!-- Navigation Tab Bar -->
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('jadwal')">📋 Jadwal Tugas</button>
+        <button class="tab-btn" onclick="switchTab('denah')">🗺️ Denah Ruangan</button>
+        <button class="tab-btn" onclick="switchTab('ac')">❄️ List AC & Remote</button>
     </div>
 
     <!-- Main Container -->
     <div class="container">
+        <!-- Filter Tanggal (Berlaku global untuk Jadwal & Status Denah) -->
         <div class="filter-card">
             <label for="obDate"><strong>Tanggal:</strong></label>
             <input type="date" id="obDate" onchange="loadOBData()">
@@ -279,17 +522,161 @@
             </button>
         </div>
 
-        <div id="summary" class="summary-box">
-            Memuat ringkasan data...
+        <!-- ================= TAB 1: JADWAL TUGAS ================= -->
+        <div id="tabJadwal">
+            <div id="summary" class="summary-box">
+                Memuat ringkasan data...
+            </div>
+            <div id="roomList">
+                <p style="text-align: center; color: #777;">Memuat jadwal ruangan...</p>
+            </div>
         </div>
 
-        <div id="roomList">
-            <p style="text-align: center; color: #777;">Memuat jadwal ruangan...</p>
+        <!-- ================= TAB 2: DENAH RUANGAN (2D GRID) ================= -->
+        <div id="tabDenah" class="hidden">
+            <!-- Legend Info -->
+            <div class="map-legend" style="margin-bottom: 12px;">
+                <div class="legend-item"><span class="color-dot" style="background:#28a745;"></span> Pasang Proyektor</div>
+                <div class="legend-item"><span class="color-dot" style="background:#0d6efd;"></span> Ada Kelas (Tanpa P)</div>
+                <div class="legend-item"><span class="color-dot" style="background:#ffc107;"></span> Kantor / Staff</div>
+                <div class="legend-item"><span class="color-dot" style="background:#ced4da;"></span> Kosong</div>
+            </div>
+
+            <!-- AREA BELAKANG (C-01, C-02, C-03) -->
+            <div class="map-section">
+                <div class="map-section-title"><span>📍 AREA BELAKANG</span></div>
+                <div class="floor-grid grid-3col">
+                    <div class="room-box" id="map-R.C-03" onclick="openRoomModal('R.C-03')">
+                        <span class="code">R.C-03</span><span class="sub">Kelas</span>
+                    </div>
+                    <div class="room-box" id="map-R.C-02" onclick="openRoomModal('R.C-02')">
+                        <span class="code">R.C-02</span><span class="sub">Kelas</span>
+                    </div>
+                    <div class="room-box" id="map-R.C-01" onclick="openRoomModal('R.C-01')">
+                        <span class="code">R.C-01</span><span class="sub">Kelas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AREA SAMPING (B-01, B-02) -->
+            <div class="map-section">
+                <div class="map-section-title"><span>📍 AREA SAMPING</span></div>
+                <div class="floor-grid grid-2col">
+                    <div class="room-box" id="map-R.B-01" onclick="openRoomModal('R.B-01')">
+                        <span class="code">R.B-01</span><span class="sub">Kelas</span>
+                    </div>
+                    <div class="room-box" id="map-R.B-02" onclick="openRoomModal('R.B-02')">
+                        <span class="code">R.B-02</span><span class="sub">Kelas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AREA UTAMA & AULA -->
+            <div class="map-section">
+                <div class="map-section-title"><span>📍 AREA UTAMA & AULA</span></div>
+                <div class="floor-grid grid-2col">
+                    <div class="room-box" id="map-R.AULA" onclick="openRoomModal('R.AULA')">
+                        <span class="code">R.AULA</span><span class="sub">R.C-04 / Aula</span>
+                    </div>
+                    <div class="room-box" id="map-R.A-07" onclick="openRoomModal('R.A-07')">
+                        <span class="code">R.A-07</span><span class="sub">Private</span>
+                    </div>
+                </div>
+                <div class="floor-grid grid-1col">
+                    <div class="room-box" id="map-R.A-06" onclick="openRoomModal('R.A-06')">
+                        <span class="code">R.A-06</span><span class="sub">Ruang Kelas Utama</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AREA DEPAN & STAFF/GURU -->
+            <div class="map-section">
+                <div class="map-section-title"><span>📍 AREA DEPAN & MANAJEMEN</span></div>
+                <div class="floor-grid grid-3col">
+                    <div class="room-box st-office" id="map-R.A-02" onclick="openRoomModal('R.A-02')">
+                        <span class="code">R.A-02</span><span class="sub">Akademik</span>
+                    </div>
+                    <div class="room-box st-office" id="map-R.A-03" onclick="openRoomModal('R.A-03')">
+                        <span class="code">R.A-03</span><span class="sub">Pimpinan</span>
+                    </div>
+                    <div class="room-box st-office" id="map-R.A-05" onclick="openRoomModal('R.A-05')">
+                        <span class="code">R.A-05</span><span class="sub">Staff Pendidik</span>
+                    </div>
+                </div>
+                <div class="floor-grid grid-2col">
+                    <div class="room-box" id="map-R.A-01" onclick="openRoomModal('R.A-01')">
+                        <span class="code">R.A-01</span><span class="sub">Ruang Kelas Depan</span>
+                    </div>
+                    <div class="room-box st-office" id="map-R.A-04" onclick="openRoomModal('R.A-04')">
+                        <span class="code">R.A-04</span><span class="sub">Ruang Guru</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AREA LANTAI 2 & LANTAI 3 -->
+            <div class="map-section">
+                <div class="map-section-title"><span>📍 AREA LANTAI 2 & LANTAI 3</span></div>
+                <div class="floor-grid grid-2col">
+                    <div class="room-box" id="map-R.LAB" onclick="openRoomModal('R.LAB')">
+                        <span class="code">R.LAB</span><span class="sub">Lab Komputer (Lt. 2)</span>
+                    </div>
+                    <div class="room-box" id="map-Kalingga" onclick="openRoomModal('Kalingga')">
+                        <span class="code">Kalingga</span><span class="sub">Aula / R. Lt. 3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 3: LIST AC & REMOTE ================= -->
+        <div id="tabAC" class="hidden">
+            <div class="summary-box">
+                ❄️ <strong>Total AC:</strong> 21 Unit terpasang di 15 Ruangan.<br>
+                📌 <em>Remote AC tersimpan di Lobby. Pastikan mengambil remote yang sesuai dengan merk & nomor ruangan!</em>
+            </div>
+            <div id="acListContainer">
+                <!-- Rendered dynamically by JS -->
+            </div>
         </div>
     </div>
 
+    <!-- Modal Pop-up Detail Ruangan (Jadwal + AC) -->
+    <div id="roomModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalRoomTitle" class="modal-title">R.A-01</h3>
+                <button class="modal-close" onclick="closeRoomModal()">✕</button>
+            </div>
+            <div id="modalRoomBody" class="modal-body">
+                Memuat detail...
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzBqhXv_7SOmZAjWMFkuhFEWiMfZw7RDkfvGTgPTeKzzTX6A_lbZ5QElMHe5BK1JOI/exec";
+
+        // Referensi Data AC Statik Sesuai CSV Data
+        const AC_DATABASE = {
+            "R.A-01": { merk: "Daikin", jumlah: 2, desc: "2 Unit AC Daikin - Gunakan remote Daikin di Lobby" },
+            "R.A-02": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Staff Akademik" },
+            "R.A-03": { merk: "Panasonic", jumlah: 1, desc: "1 Unit AC Panasonic - Ruang Pimpinan" },
+            "R.A-04": { merk: "Panasonic", jumlah: 1, desc: "1 Unit AC Panasonic - Ruang Guru" },
+            "R.A-05": { merk: "Sharp", jumlah: 1, desc: "1 Unit AC Sharp - Staff Pendidik" },
+            "R.A-06": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Kelas Utama A-06" },
+            "R.A-07": { merk: "Sharp", jumlah: 1, desc: "1 Unit AC Sharp - Ruang Private" },
+            "R.B-01": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Kelas Gedung B" },
+            "R.B-02": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Kelas Gedung B" },
+            "R.C-01": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Kelas Gedung C" },
+            "R.C-02": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Kelas Gedung C" },
+            "R.C-03": { merk: "Daikin", jumlah: 1, desc: "1 Unit AC Daikin - Kelas Gedung C" },
+            "R.AULA": { merk: "Daikin", jumlah: 4, desc: "4 Unit AC Daikin - Aula R.C-04" },
+            "R.LAB":  { merk: "Daikin", jumlah: 2, desc: "2 Unit AC Daikin - Lab Komputer Lantai 2" },
+            "Kalingga":{ merk: "Daikin", jumlah: 2, desc: "2 Unit AC Daikin - Ruang Kalingga Lantai 3" }
+        };
+
+        let currentActivePlots = [];
+        let currentBookings = {};
 
         document.addEventListener("DOMContentLoaded", () => {
             const dateInput = document.getElementById('obDate');
@@ -299,8 +686,27 @@
             const dd = String(now.getDate()).padStart(2, '0');
             dateInput.value = `${yyyy}-${mm}-${dd}`;
 
+            renderACListTab();
             loadOBData();
         });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tabJadwal').classList.add('hidden');
+            document.getElementById('tabDenah').classList.add('hidden');
+            document.getElementById('tabAC').classList.add('hidden');
+
+            if (tabName === 'jadwal') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tabJadwal').classList.remove('hidden');
+            } else if (tabName === 'denah') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tabDenah').classList.remove('hidden');
+            } else if (tabName === 'ac') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('tabAC').classList.remove('hidden');
+            }
+        }
 
         function showLoading(show) {
             const overlay = document.getElementById('loadingOverlay');
@@ -324,7 +730,13 @@
             ]).then(([slotData, plotData]) => {
                 const bookings = slotData.bookings || {};
                 const bookingDetails = slotData.bookingDetails || [];
-                renderOBView(Array.isArray(plotData) ? plotData : [], bookings, bookingDetails);
+                const activeList = Array.isArray(plotData) ? plotData : [];
+                
+                currentActivePlots = activeList;
+                currentBookings = bookings;
+
+                renderOBView(activeList, bookings, bookingDetails);
+                updateMapVisuals(activeList, bookings);
             }).catch(() => {
                 container.innerHTML = '<p style="text-align: center; color: red;">Gagal mengambil data.</p>';
             }).finally(() => {
@@ -379,6 +791,7 @@
                         ⏰ <strong>Sesi:</strong> ${displaySesi}<br>
                         👨‍🏫 <strong>Guru:</strong> ${item.teacher}<br>
                         📚 <strong>Kelas:</strong> ${item.kelas || '-'}<br>
+                        ❄️ <strong>AC:</strong> ${AC_DATABASE[item.ruangan] ? AC_DATABASE[item.ruangan].merk + ' (' + AC_DATABASE[item.ruangan].jumlah + ' Unit)' : '-'}<br>
                         🛠️ <strong>Tugas OB:</strong> ${needProyektor ? 'Nyalakan AC/Lampu + Pasang & Siapkan Proyektor' : 'Nyalakan AC & Lampu Ruangan'}
                     </div>
                 `;
@@ -386,6 +799,107 @@
             });
 
             summaryBox.innerHTML = `📌 <strong>Total Ruangan Digunakan:</strong> ${totalRuangAktif} Ruang | 📽️ <strong>Proyektor Diminta:</strong> ${totalProyektor} Unit`;
+        }
+
+        // Update Warna Status Pada Denah
+        function updateMapVisuals(plotList, bookings) {
+            // Reset semua box
+            document.querySelectorAll('.room-box').forEach(box => {
+                if (!box.classList.contains('st-office')) {
+                    box.className = 'room-box';
+                } else {
+                    box.className = 'room-box st-office';
+                }
+                const badge = box.querySelector('.icon-badge');
+                if (badge) badge.remove();
+            });
+
+            const activePlots = plotList.filter(item => item.status === "Aktif" && item.teacher && item.teacher !== "");
+
+            activePlots.forEach(item => {
+                const box = document.getElementById(`map-${item.ruangan}`);
+                if (box) {
+                    const bookedList = bookings[item.sesi] || [];
+                    const needProyektor = bookedList.includes(item.teacher) || item.proyektor === "Ya";
+
+                    if (needProyektor) {
+                        box.className = 'room-box st-proyektor';
+                        if (!box.querySelector('.icon-badge')) {
+                            box.insertAdjacentHTML('beforeend', '<span class="icon-badge">📽️</span>');
+                        }
+                    } else if (!box.classList.contains('st-proyektor')) {
+                        box.className = 'room-box st-active';
+                    }
+                }
+            });
+        }
+
+        // Render Tab List AC
+        function renderACListTab() {
+            const container = document.getElementById('acListContainer');
+            container.innerHTML = '';
+
+            for (const [room, info] of Object.entries(AC_DATABASE)) {
+                const card = document.createElement('div');
+                card.className = 'ac-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="ac-info-room">🚪 ${room}</div>
+                        <div class="ac-info-detail">Merk: <strong>${info.merk}</strong> • ${info.desc}</div>
+                    </div>
+                    <div class="ac-badge-count">❄️ ${info.jumlah} Unit</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        // Open Modal Ruangan Saat Tap Denah
+        function openRoomModal(roomCode) {
+            const modal = document.getElementById('roomModal');
+            const title = document.getElementById('modalRoomTitle');
+            const body = document.getElementById('modalRoomBody');
+
+            title.innerText = `🚪 ${roomCode}`;
+
+            const acInfo = AC_DATABASE[roomCode] || { merk: 'Daikin', jumlah: 1, desc: '-' };
+            const schedules = currentActivePlots.filter(item => item.ruangan === roomCode && item.status === "Aktif" && item.teacher);
+
+            let scheduleHTML = '';
+            if (schedules.length === 0) {
+                scheduleHTML = `<p style="color:#666; font-style:italic;">Tidak ada jadwal kelas aktif di ruangan ini pada tanggal yang dipilih.</p>`;
+            } else {
+                scheduleHTML = schedules.map(item => {
+                    const bookedList = currentBookings[item.sesi] || [];
+                    const needProyektor = bookedList.includes(item.teacher) || item.proyektor === "Ya";
+                    return `
+                        <div style="background:#f8f9fa; padding:8px 10px; border-radius:6px; margin-bottom:6px; border-left:3px solid ${needProyektor ? '#28a745' : '#0d6efd'};">
+                            <strong>⏰ Sesi:</strong> ${item.sesi}<br>
+                            <strong>👨‍🏫 Guru:</strong> ${item.teacher}<br>
+                            <strong>📚 Kelas:</strong> ${item.kelas || '-'}<br>
+                            <strong>📽️ Status:</strong> ${needProyektor ? '<span style="color:#28a745; font-weight:bold;">📽️ PASANG PROYEKTOR</span>' : 'Tanpa Proyektor'}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            body.innerHTML = `
+                <div style="margin-bottom: 12px; padding-bottom:10px; border-bottom:1px solid #eee;">
+                    <h4 style="margin:0 0 6px 0; color:#333;">❄️ Informasi AC & Remote</h4>
+                    • <strong>Merk AC:</strong> ${acInfo.merk}<br>
+                    • <strong>Jumlah Unit:</strong> ${acInfo.jumlah} Unit<br>
+                    • <strong>Keterangan:</strong> ${acInfo.desc}
+                </div>
+                <div>
+                    <h4 style="margin:0 0 6px 0; color:#333;">📋 Jadwal Hari Ini:</h4>
+                    ${scheduleHTML}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeRoomModal() {
+            document.getElementById('roomModal').classList.add('hidden');
         }
     </script>
 </body>
