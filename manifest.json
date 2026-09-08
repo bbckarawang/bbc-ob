@@ -1,0 +1,21 @@
+{
+  "short_name": "Jadwal OB",
+  "name": "Dashboard OB - BBC",
+  "icons": [
+    {
+      "src": "icon-ob.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-ob.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#e31b23",
+  "display": "standalone",
+  "orientation": "portrait"
+}
