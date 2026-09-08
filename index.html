@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <!-- (1) Meta Tag Responsif & Metadata -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- (2) Meta Viewport di Bagian <head> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Dashboard OB - BBC Ruangan & Proyektor</title>
+    
+    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1xp4tsE6RhaxXFSC7XQN45_3TOdUsUe5j&sz=s500">
+    <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1xp4tsE6RhaxXFSC7XQN45_3TOdUsUe5j&sz=s500">
+
+    <!-- (3) Style CSS Dasar untuk Mobile & Responsif Desktop -->
+    <style>
+        :root {
+            --bbc-red: #e31b23;
+            --bg-gray: #f4f6f9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: var(--bbc-red);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .header img {
+            height: 48px;
+            background: white;
+            padding: 3px 6px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            object-fit: contain;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 15px auto;
+            padding: 0 15px 30px 15px;
+        }
+
+        .filter-card {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .filter-card input[type="date"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            flex-grow: 1;
+            outline: none;
+            background: #fff;
+        }
+
+        .btn-refresh {
+            background-color: var(--bbc-red);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-refresh:active {
+            opacity: 0.8;
+        }
+
+        .summary-box {
+            background: #e9ecef;
+            border-left: 5px solid var(--bbc-red);
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 6px solid #6c757d;
+        }
+
+        .room-card.need-p {
+            border-left-color: #28a745;
+            background-color: #f4fff6;
+        }
+
+        .room-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .badge-proyektor {
+            background-color: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-normal {
+            background-color: #6c757d;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .room-detail {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 8px;
+            border-top: 1px solid #eee;
+            padding-top: 6px;
+        }
+
+        /* (4) Indikator Loading Overlay CSS (Pure CSS Spinner) */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-card {
+            background: #ffffff;
+            padding: 24px 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 280px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Pure CSS Spinner Animasi Putar */
+        .spinner-custom {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--bbc-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-title {
+            font-weight: bold;
+            font-size: 1rem;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .loading-subtitle {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 4px;
+            margin-bottom: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- (4) Indikator Loading Overlay dengan Pure CSS Spinner -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-card">
+            <div class="spinner-custom"></div>
+            <h4 class="loading-title">Memuat Data...</h4>
+            <p class="loading-subtitle">Sinkronisasi jadwal OB dengan Apps Script</p>
+        </div>
+    </div>
+
+    <!-- Header Navbar -->
+    <div class="header">
+        <img src="https://drive.google.com/thumbnail?id=1xp4tsE6RhaxXFSC7XQN45_3TOdUsUe5j&sz=s500" alt="Logo BBC">
+        <h2 style="margin:0; font-size: 1.25rem;">📋 JADWAL KESIAPAN RUANG (OB)</h2>
+        <p style="margin:3px 0 0 0; font-size:0.85rem; opacity: 0.9;">BBC Ruangan & Proyektor</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="filter-card">
+            <label for="obDate"><strong>Tanggal:</strong></label>
+            <input type="date" id="obDate" onchange="loadOBData()">
+            <button class="btn-refresh" onclick="loadOBData()" title="Refresh Data">
+                🔄
+            </button>
+        </div>
+
+        <div id="summary" class="summary-box">
+            Memuat ringkasan data...
+        </div>
+
+        <div id="roomList">
+            <p style="text-align: center; color: #777;">Memuat jadwal ruangan...</p>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzBqhXv_7SOmZAjWMFkuhFEWiMfZw7RDkfvGTgPTeKzzTX6A_lbZ5QElMHe5BK1JOI/exec";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const dateInput = document.getElementById('obDate');
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+            loadOBData();
+        });
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.remove('hidden');
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function loadOBData() {
+            const tgl = document.getElementById('obDate').value;
+            const container = document.getElementById('roomList');
+
+            showLoading(true);
+            container.innerHTML = '<p style="text-align: center; color: #777;">Memuat data... Mohon tunggu.</p>';
+
+            Promise.all([
+                fetch(`${WEB_APP_URL}?action=getSlots&tanggal=${tgl}`).then(r => r.json()).catch(() => ({ bookings: {}, bookingDetails: [] })),
+                fetch(`${WEB_APP_URL}?action=getPlottingToday&tanggal=${tgl}`).then(r => r.json()).catch(() => ([]))
+            ]).then(([slotData, plotData]) => {
+                const bookings = slotData.bookings || {};
+                const bookingDetails = slotData.bookingDetails || [];
+                renderOBView(Array.isArray(plotData) ? plotData : [], bookings, bookingDetails);
+            }).catch(() => {
+                container.innerHTML = '<p style="text-align: center; color: red;">Gagal mengambil data.</p>';
+            }).finally(() => {
+                showLoading(false);
+            });
+        }
+
+        function renderOBView(plotList, bookings, bookingDetails) {
+            const container = document.getElementById('roomList');
+            const summaryBox = document.getElementById('summary');
+            container.innerHTML = '';
+
+            let totalProyektor = 0;
+            let totalRuangAktif = 0;
+
+            const activePlots = plotList.filter(item => item.status === "Aktif" && item.teacher && item.teacher !== "");
+
+            if (activePlots.length === 0) {
+                summaryBox.innerHTML = `📌 <strong>Total Proyektor:</strong> 0 Unit`;
+                container.innerHTML = '<div style="text-align: center; padding: 30px; background: white; border-radius: 10px; color: #777;">TIDAK ADA KELAS AKTIF PADA TANGGAL INI</div>';
+                return;
+            }
+
+            activePlots.forEach(item => {
+                totalRuangAktif++;
+                const bookedList = bookings[item.sesi] || [];
+                const needProyektor = bookedList.includes(item.teacher) || item.proyektor === "Ya";
+
+                if (needProyektor) totalProyektor++;
+
+                let jamText = "";
+                if (item.sesi.includes("Privat") || item.sesi.includes("Khusus")) {
+                    const detail = bookingDetails.find(b => b.teacher === item.teacher && b.sesi === item.sesi);
+                    if (detail && detail.jamKhusus) {
+                        jamText = ` (${detail.jamKhusus})`;
+                    }
+                }
+
+                let displaySesi = `${item.sesi}${jamText}`;
+
+                const card = document.createElement('div');
+                card.className = `room-card ${needProyektor ? 'need-p' : ''}`;
+
+                card.innerHTML = `
+                    <div class="room-title">
+                        <span>🚪 ${item.ruangan}</span>
+                        ${needProyektor 
+                            ? '<span class="badge-proyektor">📽️ PASANG PROYEKTOR</span>' 
+                            : '<span class="badge-normal">❌ Tanpa Proyektor</span>'}
+                    </div>
+                    <div class="room-detail">
+                        ⏰ <strong>Sesi:</strong> ${displaySesi}<br>
+                        👨‍🏫 <strong>Guru:</strong> ${item.teacher}<br>
+                        📚 <strong>Kelas:</strong> ${item.kelas || '-'}<br>
+                        🛠️ <strong>Tugas OB:</strong> ${needProyektor ? 'Nyalakan AC/Lampu + Pasang & Siapkan Proyektor' : 'Nyalakan AC & Lampu Ruangan'}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            summaryBox.innerHTML = `📌 <strong>Total Ruangan Digunakan:</strong> ${totalRuangAktif} Ruang | 📽️ <strong>Proyektor Diminta:</strong> ${totalProyektor} Unit`;
+        }
+    </script>
+</body>
+</html>
