@@ -1,6 +1,7 @@
+JSON
 {
-  "short_name": "Jadwal OB",
-  "name": "Dashboard OB - BBC",
+  "short_name": "BBC GS",
+  "name": "BBC General Services",
   "icons": [
     {
       "src": "icon-ob.png",
