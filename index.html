@@ -8,7 +8,7 @@
     <!-- (2) Meta Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>Dashboard OB - BBC Ruangan, Denah & AC</title>
+    <title>BBC General Services (GS)</title>
     
     <!-- Icon Aplikasi Lokal -->
     <link rel="icon" type="image/png" href="icon-ob.png">
@@ -493,15 +493,15 @@
         <div class="loading-card">
             <div class="spinner-custom"></div>
             <h4 class="loading-title">Memuat Data...</h4>
-            <p class="loading-subtitle">Sinkronisasi jadwal OB dengan Apps Script</p>
+            <p class="loading-subtitle">Sinkronisasi jadwal GS dengan Apps Script</p>
         </div>
     </div>
 
     <!-- Header Navbar -->
     <div class="header">
         <img src="https://drive.google.com/thumbnail?id=1xp4tsE6RhaxXFSC7XQN45_3TOdUsUe5j&sz=s500" alt="Logo BBC">
-        <h2 style="margin:0; font-size: 1.15rem;">📋 DASHBOARD OPERASIONAL OB</h2>
-        <p style="margin:2px 0 0 0; font-size:0.8rem; opacity: 0.9;">BBC Karawang - Ruangan & AC</p>
+        <h2 style="margin:0; font-size: 1.15rem;">📋 DASHBOARD OPERASIONAL (GS)</h2>
+        <p style="margin:2px 0 0 0; font-size:0.8rem; opacity: 0.9;">BBC OB & Security Services</p>
     </div>
 
     <!-- Navigation Tab Bar -->
@@ -792,7 +792,7 @@
                         👨‍🏫 <strong>Guru:</strong> ${item.teacher}<br>
                         📚 <strong>Kelas:</strong> ${item.kelas || '-'}<br>
                         ❄️ <strong>AC:</strong> ${AC_DATABASE[item.ruangan] ? AC_DATABASE[item.ruangan].merk + ' (' + AC_DATABASE[item.ruangan].jumlah + ' Unit)' : '-'}<br>
-                        🛠️ <strong>Tugas OB:</strong> ${needProyektor ? 'Nyalakan AC/Lampu + Pasang & Siapkan Proyektor' : 'Nyalakan AC & Lampu Ruangan'}
+                        🛠️ <strong>Tugas Tim GS:</strong> ${needProyektor ? 'Nyalakan AC/Lampu + Pasang & Siapkan Proyektor' : 'Nyalakan AC & Lampu Ruangan'}
                     </div>
                 `;
                 container.appendChild(card);
