@@ -80,6 +80,7 @@
             top: 75px;
             z-index: 39;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow-x: auto;
         }
 
         .tab-btn {
@@ -94,6 +95,7 @@
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .tab-btn.active {
@@ -368,6 +370,50 @@
             white-space: nowrap;
         }
 
+        /* SUB-NAVIGASI TAB KEBUTUHAN (JOTFORM) */
+        .sub-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .sub-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sub-btn.active {
+            background: white;
+            color: var(--bbc-red);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .iframe-wrapper {
+            width: 100%;
+            height: 75vh;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            background: white;
+        }
+
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         /* MODAL POPUP JADWAL & AC RUANGAN */
         .modal-overlay {
             position: fixed;
@@ -509,12 +555,13 @@
         <button class="tab-btn active" onclick="switchTab('jadwal')">📋 Jadwal Tugas</button>
         <button class="tab-btn" onclick="switchTab('denah')">🗺️ Denah Ruangan</button>
         <button class="tab-btn" onclick="switchTab('ac')">❄️ List AC & Remote</button>
+        <button class="tab-btn" onclick="switchTab('kebutuhan')">📦 Kebutuhan</button>
     </div>
 
     <!-- Main Container -->
     <div class="container">
         <!-- Filter Tanggal (Berlaku global untuk Jadwal & Status Denah) -->
-        <div class="filter-card">
+        <div id="filterGlobalCard" class="filter-card">
             <label for="obDate"><strong>Tanggal:</strong></label>
             <input type="date" id="obDate" onchange="loadOBData()">
             <button class="btn-refresh" onclick="loadOBData()" title="Refresh Data">
@@ -637,6 +684,22 @@
                 <!-- Rendered dynamically by JS -->
             </div>
         </div>
+
+        <!-- ================= TAB 4: KEBUTUHAN (JOTFORM) ================= -->
+        <div id="tabKebutuhan" class="hidden">
+            <div class="sub-nav">
+                <button class="sub-btn active" onclick="switchKebutuhanSub('form')">📝 Form Pemesanan</button>
+                <button class="sub-btn" onclick="switchKebutuhanSub('rekap')">📊 Tabel Rekapitulasi</button>
+            </div>
+
+            <div id="subFormView" class="iframe-wrapper">
+                <iframe src="https://form.jotform.com/261953311400042" title="Form Pemesanan Kebutuhan"></iframe>
+            </div>
+
+            <div id="subRekapView" class="iframe-wrapper hidden">
+                <iframe src="https://www.jotform.com/tables/261953311400042" title="Tabel Rekapitulasi Kebutuhan"></iframe>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Pop-up Detail Ruangan (Jadwal + AC) -->
@@ -695,16 +758,40 @@
             document.getElementById('tabJadwal').classList.add('hidden');
             document.getElementById('tabDenah').classList.add('hidden');
             document.getElementById('tabAC').classList.add('hidden');
+            document.getElementById('tabKebutuhan').classList.add('hidden');
+
+            const filterCard = document.getElementById('filterGlobalCard');
 
             if (tabName === 'jadwal') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tabJadwal').classList.remove('hidden');
+                filterCard.classList.remove('hidden');
             } else if (tabName === 'denah') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 document.getElementById('tabDenah').classList.remove('hidden');
+                filterCard.classList.remove('hidden');
             } else if (tabName === 'ac') {
                 document.querySelectorAll('.tab-btn')[2].classList.add('active');
                 document.getElementById('tabAC').classList.remove('hidden');
+                filterCard.classList.add('hidden');
+            } else if (tabName === 'kebutuhan') {
+                document.querySelectorAll('.tab-btn')[3].classList.add('active');
+                document.getElementById('tabKebutuhan').classList.remove('hidden');
+                filterCard.classList.add('hidden');
+            }
+        }
+
+        function switchKebutuhanSub(type) {
+            document.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('subFormView').classList.add('hidden');
+            document.getElementById('subRekapView').classList.add('hidden');
+
+            if (type === 'form') {
+                document.querySelectorAll('.sub-btn')[0].classList.add('active');
+                document.getElementById('subFormView').classList.remove('hidden');
+            } else if (type === 'rekap') {
+                document.querySelectorAll('.sub-btn')[1].classList.add('active');
+                document.getElementById('subRekapView').classList.remove('hidden');
             }
         }
 
