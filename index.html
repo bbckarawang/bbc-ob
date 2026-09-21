@@ -370,7 +370,7 @@
             white-space: nowrap;
         }
 
-        /* SUB-NAVIGASI TAB KEBUTUHAN (JOTFORM) */
+        /* SUB-NAVIGASI TAB KEBUTUHAN & FASILITAS (JOTFORM / IFRAME) */
         .sub-nav {
             display: flex;
             gap: 10px;
@@ -553,8 +553,8 @@
     <!-- Navigation Tab Bar -->
     <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('jadwal')">📋 Jadwal Tugas</button>
-        <button class="tab-btn" onclick="switchTab('denah')">🗺️ Denah Ruangan</button>
-        <button class="tab-btn" onclick="switchTab('ac')">❄️ List AC & Remote</button>
+        <button class="tab-btn" onclick="switchTab('fasilitas')">🏢 Fasilitas & Denah</button>
+        <button class="tab-btn" onclick="switchTab('operasional')">⚙️ Operasional BBC</button>
         <button class="tab-btn" onclick="switchTab('kebutuhan')">📦 Kebutuhan</button>
     </div>
 
@@ -579,109 +579,123 @@
             </div>
         </div>
 
-        <!-- ================= TAB 2: DENAH RUANGAN (2D GRID) ================= -->
-        <div id="tabDenah" class="hidden">
-            <!-- Legend Info -->
-            <div class="map-legend" style="margin-bottom: 12px;">
-                <div class="legend-item"><span class="color-dot" style="background:#28a745;"></span> Pasang Proyektor</div>
-                <div class="legend-item"><span class="color-dot" style="background:#0d6efd;"></span> Ada Kelas (Tanpa P)</div>
-                <div class="legend-item"><span class="color-dot" style="background:#ffc107;"></span> Kantor / Staff</div>
-                <div class="legend-item"><span class="color-dot" style="background:#ced4da;"></span> Kosong</div>
+        <!-- ================= TAB 2: FASILITAS & DENAH (PENGGABUNGAN DENAH + AC) ================= -->
+        <div id="tabFasilitas" class="hidden">
+            <div class="sub-nav">
+                <button class="sub-btn active" onclick="switchFasilitasSub('denah')">🗺️ Denah Ruangan</button>
+                <button class="sub-btn" onclick="switchFasilitasSub('ac')">❄️ List AC & Remote</button>
             </div>
 
-            <!-- AREA BELAKANG (C-01, C-02, C-03) -->
-            <div class="map-section">
-                <div class="map-section-title"><span>📍 AREA BELAKANG</span></div>
-                <div class="floor-grid grid-3col">
-                    <div class="room-box" id="map-R.C-03" onclick="openRoomModal('R.C-03')">
-                        <span class="code">R.C-03</span><span class="sub">Kelas</span>
+            <!-- Sub View: Denah -->
+            <div id="subDenahView">
+                <div class="map-legend" style="margin-bottom: 12px;">
+                    <div class="legend-item"><span class="color-dot" style="background:#28a745;"></span> Pasang Proyektor</div>
+                    <div class="legend-item"><span class="color-dot" style="background:#0d6efd;"></span> Ada Kelas (Tanpa P)</div>
+                    <div class="legend-item"><span class="color-dot" style="background:#ffc107;"></span> Kantor / Staff</div>
+                    <div class="legend-item"><span class="color-dot" style="background:#ced4da;"></span> Kosong</div>
+                </div>
+
+                <!-- AREA BELAKANG (C-01, C-02, C-03) -->
+                <div class="map-section">
+                    <div class="map-section-title"><span>📍 AREA BELAKANG</span></div>
+                    <div class="floor-grid grid-3col">
+                        <div class="room-box" id="map-R.C-03" onclick="openRoomModal('R.C-03')">
+                            <span class="code">R.C-03</span><span class="sub">Kelas</span>
+                        </div>
+                        <div class="room-box" id="map-R.C-02" onclick="openRoomModal('R.C-02')">
+                            <span class="code">R.C-02</span><span class="sub">Kelas</span>
+                        </div>
+                        <div class="room-box" id="map-R.C-01" onclick="openRoomModal('R.C-01')">
+                            <span class="code">R.C-01</span><span class="sub">Kelas</span>
+                        </div>
                     </div>
-                    <div class="room-box" id="map-R.C-02" onclick="openRoomModal('R.C-02')">
-                        <span class="code">R.C-02</span><span class="sub">Kelas</span>
+                </div>
+
+                <!-- AREA SAMPING (B-01, B-02) -->
+                <div class="map-section">
+                    <div class="map-section-title"><span>📍 AREA SAMPING</span></div>
+                    <div class="floor-grid grid-2col">
+                        <div class="room-box" id="map-R.B-01" onclick="openRoomModal('R.B-01')">
+                            <span class="code">R.B-01</span><span class="sub">Kelas</span>
+                        </div>
+                        <div class="room-box" id="map-R.B-02" onclick="openRoomModal('R.B-02')">
+                            <span class="code">R.B-02</span><span class="sub">Kelas</span>
+                        </div>
                     </div>
-                    <div class="room-box" id="map-R.C-01" onclick="openRoomModal('R.C-01')">
-                        <span class="code">R.C-01</span><span class="sub">Kelas</span>
+                </div>
+
+                <!-- AREA UTAMA & AULA -->
+                <div class="map-section">
+                    <div class="map-section-title"><span>📍 AREA UTAMA & AULA</span></div>
+                    <div class="floor-grid grid-2col">
+                        <div class="room-box" id="map-R.AULA" onclick="openRoomModal('R.AULA')">
+                            <span class="code">R.AULA</span><span class="sub">R.C-04 / Aula</span>
+                        </div>
+                        <div class="room-box" id="map-R.A-07" onclick="openRoomModal('R.A-07')">
+                            <span class="code">R.A-07</span><span class="sub">Private</span>
+                        </div>
+                    </div>
+                    <div class="floor-grid grid-1col">
+                        <div class="room-box" id="map-R.A-06" onclick="openRoomModal('R.A-06')">
+                            <span class="code">R.A-06</span><span class="sub">Ruang Kelas Utama</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AREA DEPAN & STAFF/GURU -->
+                <div class="map-section">
+                    <div class="map-section-title"><span>📍 AREA DEPAN & MANAJEMEN</span></div>
+                    <div class="floor-grid grid-3col">
+                        <div class="room-box st-office" id="map-R.A-02" onclick="openRoomModal('R.A-02')">
+                            <span class="code">R.A-02</span><span class="sub">Akademik</span>
+                        </div>
+                        <div class="room-box st-office" id="map-R.A-03" onclick="openRoomModal('R.A-03')">
+                            <span class="code">R.A-03</span><span class="sub">Pimpinan</span>
+                        </div>
+                        <div class="room-box st-office" id="map-R.A-05" onclick="openRoomModal('R.A-05')">
+                            <span class="code">R.A-05</span><span class="sub">Staff Pendidik</span>
+                        </div>
+                    </div>
+                    <div class="floor-grid grid-2col">
+                        <div class="room-box" id="map-R.A-01" onclick="openRoomModal('R.A-01')">
+                            <span class="code">R.A-01</span><span class="sub">Ruang Kelas Depan</span>
+                        </div>
+                        <div class="room-box st-office" id="map-R.A-04" onclick="openRoomModal('R.A-04')">
+                            <span class="code">R.A-04</span><span class="sub">Ruang Guru</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AREA LANTAI 2 & LANTAI 3 -->
+                <div class="map-section">
+                    <div class="map-section-title"><span>📍 AREA LANTAI 2 & LANTAI 3</span></div>
+                    <div class="floor-grid grid-2col">
+                        <div class="room-box" id="map-R.LAB" onclick="openRoomModal('R.LAB')">
+                            <span class="code">R.LAB</span><span class="sub">Lab Komputer (Lt. 2)</span>
+                        </div>
+                        <div class="room-box" id="map-Kalingga" onclick="openRoomModal('Kalingga')">
+                            <span class="code">Kalingga</span><span class="sub">Aula / R. Lt. 3</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- AREA SAMPING (B-01, B-02) -->
-            <div class="map-section">
-                <div class="map-section-title"><span>📍 AREA SAMPING</span></div>
-                <div class="floor-grid grid-2col">
-                    <div class="room-box" id="map-R.B-01" onclick="openRoomModal('R.B-01')">
-                        <span class="code">R.B-01</span><span class="sub">Kelas</span>
-                    </div>
-                    <div class="room-box" id="map-R.B-02" onclick="openRoomModal('R.B-02')">
-                        <span class="code">R.B-02</span><span class="sub">Kelas</span>
-                    </div>
+            <!-- Sub View: AC -->
+            <div id="subAcView" class="hidden">
+                <div class="summary-box">
+                    ❄️ <strong>Total AC:</strong> 21 Unit terpasang di 15 Ruangan.<br>
+                    📌 <em>Remote AC tersimpan di Lobby. Pastikan mengambil remote yang sesuai dengan merk & nomor ruangan!</em>
                 </div>
-            </div>
-
-            <!-- AREA UTAMA & AULA -->
-            <div class="map-section">
-                <div class="map-section-title"><span>📍 AREA UTAMA & AULA</span></div>
-                <div class="floor-grid grid-2col">
-                    <div class="room-box" id="map-R.AULA" onclick="openRoomModal('R.AULA')">
-                        <span class="code">R.AULA</span><span class="sub">R.C-04 / Aula</span>
-                    </div>
-                    <div class="room-box" id="map-R.A-07" onclick="openRoomModal('R.A-07')">
-                        <span class="code">R.A-07</span><span class="sub">Private</span>
-                    </div>
-                </div>
-                <div class="floor-grid grid-1col">
-                    <div class="room-box" id="map-R.A-06" onclick="openRoomModal('R.A-06')">
-                        <span class="code">R.A-06</span><span class="sub">Ruang Kelas Utama</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AREA DEPAN & STAFF/GURU -->
-            <div class="map-section">
-                <div class="map-section-title"><span>📍 AREA DEPAN & MANAJEMEN</span></div>
-                <div class="floor-grid grid-3col">
-                    <div class="room-box st-office" id="map-R.A-02" onclick="openRoomModal('R.A-02')">
-                        <span class="code">R.A-02</span><span class="sub">Akademik</span>
-                    </div>
-                    <div class="room-box st-office" id="map-R.A-03" onclick="openRoomModal('R.A-03')">
-                        <span class="code">R.A-03</span><span class="sub">Pimpinan</span>
-                    </div>
-                    <div class="room-box st-office" id="map-R.A-05" onclick="openRoomModal('R.A-05')">
-                        <span class="code">R.A-05</span><span class="sub">Staff Pendidik</span>
-                    </div>
-                </div>
-                <div class="floor-grid grid-2col">
-                    <div class="room-box" id="map-R.A-01" onclick="openRoomModal('R.A-01')">
-                        <span class="code">R.A-01</span><span class="sub">Ruang Kelas Depan</span>
-                    </div>
-                    <div class="room-box st-office" id="map-R.A-04" onclick="openRoomModal('R.A-04')">
-                        <span class="code">R.A-04</span><span class="sub">Ruang Guru</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AREA LANTAI 2 & LANTAI 3 -->
-            <div class="map-section">
-                <div class="map-section-title"><span>📍 AREA LANTAI 2 & LANTAI 3</span></div>
-                <div class="floor-grid grid-2col">
-                    <div class="room-box" id="map-R.LAB" onclick="openRoomModal('R.LAB')">
-                        <span class="code">R.LAB</span><span class="sub">Lab Komputer (Lt. 2)</span>
-                    </div>
-                    <div class="room-box" id="map-Kalingga" onclick="openRoomModal('Kalingga')">
-                        <span class="code">Kalingga</span><span class="sub">Aula / R. Lt. 3</span>
-                    </div>
+                <div id="acListContainer">
+                    <!-- Rendered dynamically by JS -->
                 </div>
             </div>
         </div>
 
-        <!-- ================= TAB 3: LIST AC & REMOTE ================= -->
-        <div id="tabAC" class="hidden">
-            <div class="summary-box">
-                ❄️ <strong>Total AC:</strong> 21 Unit terpasang di 15 Ruangan.<br>
-                📌 <em>Remote AC tersimpan di Lobby. Pastikan mengambil remote yang sesuai dengan merk & nomor ruangan!</em>
-            </div>
-            <div id="acListContainer">
-                <!-- Rendered dynamically by JS -->
+        <!-- ================= TAB 3: OPERASIONAL BBC (URL APPS SCRIPT BARU) ================= -->
+        <div id="tabOperasional" class="hidden">
+            <div class="iframe-wrapper">
+                <iframe id="iframeOperasional" src="" title="Operasional BBC"></iframe>
             </div>
         </div>
 
@@ -718,6 +732,7 @@
     <!-- JavaScript Application Logic -->
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzBqhXv_7SOmZAjWMFkuhFEWiMfZw7RDkfvGTgPTeKzzTX6A_lbZ5QElMHe5BK1JOI/exec";
+        const OPERASIONAL_URL = "https://script.google.com/macros/s/AKfycbzjMgtSvIlC3O4ks56n87Cct0Q9j_j6RZgJPLq5cLyGvrIKNZVXGZOSsJ4UahVsNwO8/exec";
 
         // Referensi Data AC Statik Sesuai CSV Data
         const AC_DATABASE = {
@@ -756,8 +771,8 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('tabJadwal').classList.add('hidden');
-            document.getElementById('tabDenah').classList.add('hidden');
-            document.getElementById('tabAC').classList.add('hidden');
+            document.getElementById('tabFasilitas').classList.add('hidden');
+            document.getElementById('tabOperasional').classList.add('hidden');
             document.getElementById('tabKebutuhan').classList.add('hidden');
 
             const filterCard = document.getElementById('filterGlobalCard');
@@ -766,14 +781,20 @@
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tabJadwal').classList.remove('hidden');
                 filterCard.classList.remove('hidden');
-            } else if (tabName === 'denah') {
+            } else if (tabName === 'fasilitas') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tabDenah').classList.remove('hidden');
+                document.getElementById('tabFasilitas').classList.remove('hidden');
                 filterCard.classList.remove('hidden');
-            } else if (tabName === 'ac') {
+            } else if (tabName === 'operasional') {
                 document.querySelectorAll('.tab-btn')[2].classList.add('active');
-                document.getElementById('tabAC').classList.remove('hidden');
+                document.getElementById('tabOperasional').classList.remove('hidden');
                 filterCard.classList.add('hidden');
+
+                // Lazy load iframe agar aplikasi tidak berat saat pertama dibuka
+                const iframe = document.getElementById('iframeOperasional');
+                if (!iframe.src) {
+                    iframe.src = OPERASIONAL_URL;
+                }
             } else if (tabName === 'kebutuhan') {
                 document.querySelectorAll('.tab-btn')[3].classList.add('active');
                 document.getElementById('tabKebutuhan').classList.remove('hidden');
@@ -781,16 +802,32 @@
             }
         }
 
+        function switchFasilitasSub(type) {
+            const btns = document.querySelectorAll('#tabFasilitas .sub-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            document.getElementById('subDenahView').classList.add('hidden');
+            document.getElementById('subAcView').classList.add('hidden');
+
+            if (type === 'denah') {
+                btns[0].classList.add('active');
+                document.getElementById('subDenahView').classList.remove('hidden');
+            } else if (type === 'ac') {
+                btns[1].classList.add('active');
+                document.getElementById('subAcView').classList.remove('hidden');
+            }
+        }
+
         function switchKebutuhanSub(type) {
-            document.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
+            const btns = document.querySelectorAll('#tabKebutuhan .sub-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
             document.getElementById('subFormView').classList.add('hidden');
             document.getElementById('subRekapView').classList.add('hidden');
 
             if (type === 'form') {
-                document.querySelectorAll('.sub-btn')[0].classList.add('active');
+                btns[0].classList.add('active');
                 document.getElementById('subFormView').classList.remove('hidden');
             } else if (type === 'rekap') {
-                document.querySelectorAll('.sub-btn')[1].classList.add('active');
+                btns[1].classList.add('active');
                 document.getElementById('subRekapView').classList.remove('hidden');
             }
         }
