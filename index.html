@@ -370,6 +370,50 @@
             white-space: nowrap;
         }
 
+        /* CARD AKSES OPERASIONAL (SOLUSI APPS SCRIPT IFRAME BLOCK) */
+        .external-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-top: 10px;
+        }
+
+        .external-card h3 {
+            margin-top: 0;
+            color: #1e293b;
+            font-size: 1.2rem;
+        }
+
+        .external-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .btn-open-external {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--bbc-red);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 10px rgba(227, 27, 35, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-open-external:hover, .btn-open-external:active {
+            background-color: #c0131a;
+            transform: translateY(-1px);
+        }
+
         /* SUB-NAVIGASI TAB KEBUTUHAN & FASILITAS (JOTFORM / IFRAME) */
         .sub-nav {
             display: flex;
@@ -692,10 +736,20 @@
             </div>
         </div>
 
-        <!-- ================= TAB 3: OPERASIONAL BBC (URL APPS SCRIPT BARU) ================= -->
+        <!-- ================= TAB 3: OPERASIONAL BBC (ACTION CARD - PERBAIKAN IFRAME) ================= -->
         <div id="tabOperasional" class="hidden">
-            <div class="iframe-wrapper">
-                <iframe id="iframeOperasional" src="" title="Operasional BBC"></iframe>
+            <div class="external-card">
+                <h3>⚙️ Form Operasional & Input Data BBC</h3>
+                <p>
+                    Layanan Google Apps Script memerlukan akses langsung demi keamanan.<br>
+                    Silakan klik tombol di bawah untuk membuka aplikasi operasional di tab baru.
+                </p>
+                <a href="https://script.google.com/macros/s/AKfycbzjMgtSvIlC3O4ks56n87Cct0Q9j_j6RZgJPLq5cLyGvrIKNZVXGZOSsJ4UahVsNwO8/exec" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="btn-open-external">
+                   🚀 Buka Operasional BBC
+                </a>
             </div>
         </div>
 
@@ -789,12 +843,6 @@
                 document.querySelectorAll('.tab-btn')[2].classList.add('active');
                 document.getElementById('tabOperasional').classList.remove('hidden');
                 filterCard.classList.add('hidden');
-
-                // Lazy load iframe agar aplikasi tidak berat saat pertama dibuka
-                const iframe = document.getElementById('iframeOperasional');
-                if (!iframe.src) {
-                    iframe.src = OPERASIONAL_URL;
-                }
             } else if (tabName === 'kebutuhan') {
                 document.querySelectorAll('.tab-btn')[3].classList.add('active');
                 document.getElementById('tabKebutuhan').classList.remove('hidden');
